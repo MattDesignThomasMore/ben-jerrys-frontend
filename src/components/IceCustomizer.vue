@@ -2,8 +2,11 @@
   <div class="customizer-card">
     <h2>🍦 Stel je eigen ijsje samen</h2>
 
-    <!-- 3D-viewer bovenaan, smaak & topping worden meegegeven -->
-    <Ice3DViewer :flavor="order.flavor" :topping="order.topping" />
+    <!-- 3D-viewer met smaak en sprinkle-kleur als props -->
+    <Ice3DViewer
+      :flavor="order.flavor"
+      :sprinkleColor="order.sprinkleColor"
+    />
 
     <!-- Formulier -->
     <form @submit.prevent="submitOrder" class="order-form">
@@ -19,12 +22,12 @@
       </label>
 
       <label>
-        Topping:
-        <select v-model="order.topping" required>
-          <option disabled value="">-- Kies een topping --</option>
-          <option>Sprinkles</option>
-          <option>Chocoladesaus</option>
-          <option>Noten</option>
+        Sprinkle kleur:
+        <select v-model="order.sprinkleColor" required>
+          <option disabled value="">-- Kies een kleur --</option>
+          <option>Geel</option>
+          <option>Blauw</option>
+          <option>Groen</option>
         </select>
       </label>
 
@@ -67,7 +70,7 @@ export default {
     return {
       order: {
         flavor: '',
-        topping: '',
+        sprinkleColor: '', // 🔧 aangepast
         name: '',
         address: '',
         price: null
@@ -87,7 +90,13 @@ export default {
         })
         if (!res.ok) throw new Error()
         this.success = true
-        this.order = { flavor: '', topping: '', name: '', address: '', price: null }
+        this.order = {
+          flavor: '',
+          sprinkleColor: '', // ✅ reset ook dit!
+          name: '',
+          address: '',
+          price: null
+        }
       } catch {
         this.error = true
       }

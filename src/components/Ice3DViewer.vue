@@ -18,12 +18,19 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 export default {
   name: 'Ice3DViewer',
   props: {
-    flavor: String
+    flavor: String,
+    sprinkleColor: String
   },
   setup(props) {
     const container = ref(null);
     let scene, camera, renderer, controls;
     let iceMesh = null;
+
+    const sprinkleMeshes = {
+      Geel: null,
+      Blauw: null,
+      Groen: null
+    };
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -46,6 +53,18 @@ export default {
       if (flavor === 'Aardbei') color = '#ff6fa5';
       if (flavor === 'Karamel') color = '#c69c6d';
       iceMesh.material.color = new Color(color);
+    };
+
+    const updateSprinkleVisibility = (kleur) => {
+      // Verberg eerst alles
+      Object.values(sprinkleMeshes).forEach(mesh => {
+        if (mesh) mesh.visible = false;
+      });
+
+      // Toon gekozen kleur
+      if (sprinkleMeshes[kleur]) {
+        sprinkleMeshes[kleur].visible = true;
+      }
     };
 
     onMounted(() => {
@@ -81,19 +100,28 @@ export default {
           scene.add(model);
 
           model.traverse((child) => {
-            if (child.isMesh && child.name === 'Node-Mesh_1') {
-              iceMesh = child;
-              console.log('✅ IJsbol gevonden:', child.name);
+            if (child.isMesh) {
+              console.log('🧊 Mesh:', child.name);
+
+              if (child.name === 'Node-Mesh_1') {
+                iceMesh = child;
+              }
+
+              // Mapping gebaseerd op wat je ziet in kleuren:
+              if (child.name === 'Node-Mesh_2') sprinkleMeshes['Geel'] = child;   // was "bruin"
+              if (child.name === 'Node-Mesh_3') sprinkleMeshes['Blauw'] = child;
+              if (child.name === 'Node-Mesh_4') sprinkleMeshes['Groen'] = child;
             }
           });
 
-          updateFlavorColor(props.flavor); // Initieel instellen
+          updateFlavorColor(props.flavor);
+          updateSprinkleVisibility(props.sprinkleColor);
         },
         (xhr) => {
           console.log(`📦 Laden: ${(xhr.loaded / xhr.total * 100).toFixed(1)}%`);
         },
         (err) => {
-          console.error('❌ Fout bij laden ice.glb:', err);
+          console.error('❌ Fout bij laden:', err);
         }
       );
 
@@ -107,10 +135,9 @@ export default {
       renderer.dispose();
     });
 
-    // Als smaak verandert → kleur toepassen
-    watch(() => props.flavor, (newFlavor) => {
-      updateFlavorColor(newFlavor);
-    });
+    // Reageer op props
+    watch(() => props.flavor, updateFlavorColor);
+    watch(() => props.sprinkleColor, updateSprinkleVisibility);
 
     return { container };
   }
