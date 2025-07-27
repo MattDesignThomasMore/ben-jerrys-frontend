@@ -8,8 +8,10 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@types/three": "^0.178.1",
     "core-js": "^3.8.3",
     "three": "^0.178.0",
+    "three-stdlib": "^2.36.0",
     "vue": "^3.2.13",
     "vue-router": "^4.5.1"
   },
