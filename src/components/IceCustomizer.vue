@@ -3,19 +3,19 @@
 <!-- Welkomsttekst -->
 <div class="welcome-text">
   <div class="wood-sign">
+    <div class="bunting"></div>
     <div class="lights">
-      <span v-for="n in 12" :key="n" class="bulb"></span>
+      <span v-for="n in 16" :key="n" class="bulb"></span>
     </div>
     <div class="sign-content">
-      <img src="https://cdn-icons-png.flaticon.com/512/4300/4300082.png" class="ice-icon left" alt="ijsje" />
       <div class="text">
-        <h1>Welkom bij Ben & Jerry ijsconfigurator</h1>
-        <p>Stel jouw droomijsje samen in 3 simpele stappen!</p>
+        <h1>🍦 Welkom bij <span class="brand">Ben & Jerry’s</span> ijsconfigurator</h1>
+        <p>Stel jouw droomijsje samen in 3 simpele stappen</p>
       </div>
-      <img src="https://cdn-icons-png.flaticon.com/512/3917/3917471.png" class="ice-icon right" alt="ijsje" />
     </div>
   </div>
 </div>
+
 
 
   <div class="ice-app">
