@@ -149,9 +149,9 @@ const flavors = [
 ];
 
 const toppings = [
-  { name: 'Geel', color: '#f9e79f', emoji: '🟡' },
-  { name: 'Blauw', color: '#85c1e9', emoji: '🔵' },
-  { name: 'Groen', color: '#abebc6', emoji: '🟢' },
+  { name: 'Geel', color: '#f9e79f', },
+  { name: 'Blauw', color: '#85c1e9', },
+  { name: 'Groen', color: '#abebc6', },
   { name: 'Geen', color: '#dddddd', emoji: '🚫' }
 ];
 
@@ -226,7 +226,10 @@ onMounted(() => {
   // 1) Scene en camera
   scene = new Scene();
   camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 1.5, 3);
+  camera.position.set(2, 0, 1);
+  camera.lookAt(0, 0, 0);
+
+  
 
   // 2) Renderer
   renderer = new WebGLRenderer({ antialias: true, alpha: true });
@@ -248,7 +251,7 @@ onMounted(() => {
   scene.add(dir);
 
   // 5) HDR-omgeving laden
-  const hdrUrl = window.location.origin + '/textures/benjerrys_shop2.hdr';
+  const hdrUrl = window.location.origin + '/textures/benjerrys_shop.hdr';
   new RGBELoader().load(
     hdrUrl,
     tex => {
@@ -265,28 +268,45 @@ onMounted(() => {
   );
 
   // 6) GLTF-model
-  new GLTFLoader().load('/models/ice.glb', gltf => {
-    const model = gltf.scene;
-    model.scale.set(1.8, 1.8, 1.8);
-    scene.add(model);
-    model.traverse(child => {
-      if (!child.isMesh) return;
-      if (child.name === 'Node-Mesh_1') {
-        iceMesh = child;
-        iceMesh.material.color = new Color('#ffffff');
-        outlineMesh = new Mesh(
-          child.geometry.clone(),
-          new MeshBasicMaterial({ color: 0x00bfff, transparent: true, opacity: 0 })
-        );
-        outlineMesh.scale.set(1.05, 1.05, 1.05);
-        scene.add(outlineMesh);
-      }
-      if (child.name === 'Node-Mesh_2') sprinkleMeshes.Geel = child;
-      if (child.name === 'Node-Mesh_3') sprinkleMeshes.Blauw = child;
-      if (child.name === 'Node-Mesh_4') sprinkleMeshes.Groen = child;
-    });
-    Object.values(sprinkleMeshes).forEach(m => m && (m.visible = false));
+// 6) GLTF-model
+new GLTFLoader().load('/models/ice.glb', gltf => {
+  const model = gltf.scene;
+
+  // 1) schaal en lift het hele model
+  model.scale.set(1.8, 1.8, 1.8);
+  model.position.y = 0.2;
+  scene.add(model);
+
+  // 2) traverse voor hoofd‑mesh en sprinkles
+  model.traverse(child => {
+    if (!child.isMesh) return;
+
+    // hoofd-ijs mesh: bewaar voor selectie
+    if (child.name === 'Node-Mesh_1') {
+      iceMesh = child;
+      iceMesh.material.color = new Color('#ffffff');
+
+      // outline als child van dezelfde mesh
+      outlineMesh = new Mesh(
+        child.geometry.clone(),
+        new MeshBasicMaterial({ color: 0x00bfff, transparent: true, opacity: 0 })
+      );
+      // neem dezelfde scale mee en zet lichtjes groter
+      outlineMesh.scale.copy(child.scale).multiplyScalar(1.05);
+      // voeg toe als child, niet direct aan scene
+      child.add(outlineMesh);
+    }
+
+    // sprinkles blijven onder model hangen, dus liften automatisch mee
+    if (child.name === 'Node-Mesh_2') sprinkleMeshes.Geel  = child;
+    if (child.name === 'Node-Mesh_3') sprinkleMeshes.Blauw = child;
+    if (child.name === 'Node-Mesh_4') sprinkleMeshes.Groen = child;
   });
+
+  // 3) alle sprinkles initieel verbergen
+  Object.values(sprinkleMeshes).forEach(m => m && (m.visible = false));
+});
+
 
   // 7) Animatie-loop
   (function animate() {
