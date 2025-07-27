@@ -1,150 +1,338 @@
 <template>
-  <div class="customizer-card">
-    <h2>🍦 Stel je eigen ijsje samen</h2>
+  <div class="full-screen">
+    <div class="instruction" v-if="step === 1">
+      ✅ Klik op de ijsbol om je smaak te kiezen.
+    </div>
 
-    <!-- 3D-viewer met smaak en sprinkle-kleur als props -->
-    <Ice3DViewer
-      :flavor="order.flavor"
-      :sprinkleColor="order.sprinkleColor"
-    />
+    <div ref="container" class="three-container" @click="onCanvasClick" @mousemove="onMouseMove"></div>
 
-    <!-- Formulier -->
-    <form @submit.prevent="submitOrder" class="order-form">
-      <label>
-        Smaak:
-        <select v-model="order.flavor" required>
-          <option disabled value="">-- Kies een smaak --</option>
-          <option>Vanille</option>
-          <option>Chocolade</option>
-          <option>Aardbei</option>
-          <option>Karamel</option>
-        </select>
-      </label>
+    <!-- STAP 1: Smaak -->
+    <div v-if="step === 1 && iceSelected" class="popup" @click.stop>
+      <div class="popup-header">
+        <span class="step">Stap 1: Kies je smaak</span>
+        <button class="next-button" @click="goToNextStep">Volgende →</button>
+      </div>
+      <div class="flavor-options">
+        <div
+          v-for="flavorOption in flavorOptions"
+          :key="flavorOption.name"
+          :class="['flavor-circle', { selected: props.flavor === flavorOption.name }]"
+          :style="{ background: flavorOption.color }"
+          @click="selectFlavor(flavorOption.name)"
+        >
+          {{ flavorOption.emoji }}
+        </div>
+      </div>
+    </div>
 
-      <label>
-        Sprinkle kleur:
-        <select v-model="order.sprinkleColor" required>
-          <option disabled value="">-- Kies een kleur --</option>
-          <option>Geel</option>
-          <option>Blauw</option>
-          <option>Groen</option>
-        </select>
-      </label>
-
-      <label>
-        Naam:
-        <input type="text" v-model="order.name" required />
-      </label>
-
-      <label>
-        Adres:
-        <input type="text" v-model="order.address" required />
-      </label>
-
-      <label>
-        Prijs (€):
-        <input
-          type="number"
-          v-model.number="order.price"
-          min="0.5"
-          step="0.01"
-          required
-        />
-      </label>
-
-      <button type="submit">Bestel Nu</button>
-    </form>
-
-    <p v-if="success" class="success">✅ Bestelling verzonden!</p>
-    <p v-if="error" class="error">❌ Er is iets misgegaan.</p>
+    <!-- STAP 2: Toppings -->
+    <div v-if="step === 2" class="popup" @click.stop>
+      <div class="popup-header">
+        <span class="step">Stap 2: Kies je toppings</span>
+        <button class="next-button" @click="goToNextStep">Volgende →</button>
+      </div>
+      <div class="flavor-options">
+        <div
+          v-for="(value, kleur) in sprinkleMeshes"
+          :key="kleur"
+          :class="['flavor-circle', { selected: props.sprinkleColor === kleur }]"
+          :style="{ background: kleur.toLowerCase() }"
+          @click="selectTopping(kleur)"
+        >
+          🍬
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<script>
-import Ice3DViewer from './Ice3DViewer.vue'
+<script setup>
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  AmbientLight,
+  DirectionalLight,
+  Raycaster,
+  Vector2,
+  Color,
+  Mesh,
+  MeshBasicMaterial
+} from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import {
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  defineProps,
+  defineEmits
+} from 'vue';
 
-export default {
-  name: 'IceCustomizer',
-  components: { Ice3DViewer },
-  data() {
-    return {
-      order: {
-        flavor: '',
-        sprinkleColor: '', // 🔧 aangepast
-        name: '',
-        address: '',
-        price: null
-      },
-      success: false,
-      error: false
-    }
-  },
-  methods: {
-    async submitOrder() {
-      this.success = this.error = false
-      try {
-        const res = await fetch('http://localhost:5000/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.order)
-        })
-        if (!res.ok) throw new Error()
-        this.success = true
-        this.order = {
-          flavor: '',
-          sprinkleColor: '', // ✅ reset ook dit!
-          name: '',
-          address: '',
-          price: null
-        }
-      } catch {
-        this.error = true
-      }
-    }
+const props = defineProps({
+  flavor: String,
+  sprinkleColor: String
+});
+const emit = defineEmits(['update:flavor', 'update:sprinkleColor']);
+
+const container = ref(null);
+let scene, camera, renderer, controls;
+let iceMesh = null;
+let iceOutlineMesh = null;
+const raycaster = new Raycaster();
+const pointer = new Vector2();
+const iceSelected = ref(false);
+const step = ref(1);
+
+const sprinkleMeshes = {
+  Geel: null,
+  Blauw: null,
+  Groen: null
+};
+
+const flavorOptions = [
+  { name: 'Vanille', color: '#fff5c3', emoji: '🤍' },
+  { name: 'Chocolade', color: '#5D3A00', emoji: '🍫' },
+  { name: 'Aardbei', color: '#ff6fa5', emoji: '🍓' },
+  { name: 'Karamel', color: '#c69c6d', emoji: '🍯' }
+];
+
+function updateFlavorColor(flavor) {
+  if (!iceMesh) return;
+  const found = flavorOptions.find(f => f.name === flavor);
+  iceMesh.material.color = new Color(found ? found.color : '#ffffff');
+}
+
+function updateSprinkleVisibility(kleur) {
+  Object.values(sprinkleMeshes).forEach(mesh => mesh && (mesh.visible = false));
+  if (sprinkleMeshes[kleur]) sprinkleMeshes[kleur].visible = true;
+}
+
+function showOutlineMesh(active) {
+  if (iceOutlineMesh) {
+    iceOutlineMesh.visible = active;
+    iceOutlineMesh.material.opacity = active ? 0.9 : 0.0;
+    iceOutlineMesh.material.color.set(active ? 0x00bfff : 0x000000);
   }
 }
+
+function onCanvasClick(event) {
+  const intersects = raycastToIce(event);
+  if (step.value === 1) iceSelected.value = intersects.length > 0;
+}
+
+function onMouseMove(event) {
+  const intersects = raycastToIce(event);
+  showOutlineMesh(intersects.length > 0);
+}
+
+function raycastToIce(event) {
+  if (!iceMesh || !container.value) return [];
+  const rect = container.value.getBoundingClientRect();
+  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointer, camera);
+  return raycaster.intersectObject(iceMesh);
+}
+
+function selectFlavor(flavor) {
+  emit('update:flavor', flavor);
+  updateFlavorColor(flavor);
+}
+
+function selectTopping(kleur) {
+  emit('update:sprinkleColor', kleur);
+  updateSprinkleVisibility(kleur);
+}
+
+function goToNextStep() {
+  step.value++;
+  iceSelected.value = false;
+}
+
+onMounted(() => {
+  scene = new Scene();
+  camera = new PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 1.5, 3);
+
+  renderer = new WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.value.appendChild(renderer.domElement);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  scene.add(new AmbientLight(0xffffff, 0.6));
+  const dir = new DirectionalLight(0xffffff, 0.8);
+  dir.position.set(5, 10, 7.5);
+  scene.add(dir);
+
+  const loader = new GLTFLoader();
+  const url = process.env.BASE_URL + 'models/ice.glb';
+  loader.load(url, gltf => {
+    const model = gltf.scene;
+    model.scale.set(1.8, 1.8, 1.8);
+    scene.add(model);
+
+    model.traverse(child => {
+      if (child.isMesh) {
+        if (child.name === 'Node-Mesh_1') {
+          iceMesh = child;
+          const outlineMaterial = new MeshBasicMaterial({
+            color: 0x00bfff,
+            transparent: true,
+            opacity: 0.0,
+            depthWrite: false
+          });
+          iceOutlineMesh = new Mesh(child.geometry.clone(), outlineMaterial);
+          iceOutlineMesh.scale.set(1.07, 1.07, 1.07);
+          iceOutlineMesh.visible = false;
+          scene.add(iceOutlineMesh);
+        }
+        if (child.name === 'Node-Mesh_2') sprinkleMeshes['Geel'] = child;
+        if (child.name === 'Node-Mesh_3') sprinkleMeshes['Blauw'] = child;
+        if (child.name === 'Node-Mesh_4') sprinkleMeshes['Groen'] = child;
+      }
+    });
+
+    updateFlavorColor(props.flavor);
+    updateSprinkleVisibility(props.sprinkleColor);
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', () => {});
+  controls.dispose();
+  renderer.dispose();
+});
+
+watch(() => props.flavor, updateFlavorColor);
+watch(() => props.sprinkleColor, updateSprinkleVisibility);
 </script>
 
 <style scoped>
-.customizer-card {
-  max-width: 500px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+.full-screen {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #f4f6fa;
 }
-.order-form {
-  display: grid;
-  gap: 1rem;
+
+.instruction {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
   margin-top: 1rem;
+  color: #333;
 }
-.order-form label {
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
-}
-.order-form input,
-.order-form select {
-  padding: 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-.order-form button {
-  margin-top: 1rem;
-  background: #ff6b6b;
-  color: #fff;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 6px;
+
+.three-container {
+  width: 100%;
+  height: 100vh;
+  position: relative;
   cursor: pointer;
+  overflow: hidden;
 }
-.success {
-  color: green;
-  margin-top: 1rem;
+
+.popup {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  animation: slide-up 0.3s ease;
 }
-.error {
-  color: red;
-  margin-top: 1rem;
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.step {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #666;
+}
+
+.next-button {
+  background: #00bfff;
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.next-button:hover {
+  background: #0099cc;
+}
+
+.flavor-options {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.flavor-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: transform 0.2s ease, border 0.2s ease;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.flavor-circle:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.flavor-circle.selected {
+  border-color: #111;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 </style>
