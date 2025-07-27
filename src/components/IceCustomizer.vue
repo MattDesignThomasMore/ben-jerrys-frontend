@@ -1,4 +1,23 @@
 <template>
+
+<!-- Welkomsttekst -->
+<div class="welcome-text">
+  <div class="wood-sign">
+    <div class="lights">
+      <span v-for="n in 12" :key="n" class="bulb"></span>
+    </div>
+    <div class="sign-content">
+      <img src="https://cdn-icons-png.flaticon.com/512/4300/4300082.png" class="ice-icon left" alt="ijsje" />
+      <div class="text">
+        <h1>Welkom bij Ben & Jerry ijsconfigurator</h1>
+        <p>Stel jouw droomijsje samen in 3 simpele stappen!</p>
+      </div>
+      <img src="https://cdn-icons-png.flaticon.com/512/3917/3917471.png" class="ice-icon right" alt="ijsje" />
+    </div>
+  </div>
+</div>
+
+
   <div class="ice-app">
     <!-- 3D canvas -->
     <div
@@ -274,7 +293,7 @@ new GLTFLoader().load('/models/ice.glb', gltf => {
 
   // 1) schaal en lift het hele model
   model.scale.set(1.8, 1.8, 1.8);
-  model.position.y = 0.2;
+  model.position.y = 0.1;
   scene.add(model);
 
   // 2) traverse voor hoofd‑mesh en sprinkles
@@ -455,4 +474,111 @@ input {
   opacity: 0;
   transform: translateY(20px);
 }
+
+/* Welkomstbord */
+.welcome-text {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  animation: drop-in 1s ease-out forwards;
+  width: 100%;
+  max-width: 700px;
+}
+
+.wood-sign {
+  background: url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat;
+  background-color: #8b5e3c;
+  border-radius: 0 0 32px 32px;
+  border-bottom: 8px solid #6b4c2a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 2rem 2rem 3rem;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+  color: #fff8e1;
+}
+
+.sign-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.sign-content .text {
+  flex: 1;
+}
+
+.sign-content h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  color: #fffde7;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+}
+
+.sign-content p {
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  color: #fffbe6;
+}
+
+.ice-icon {
+  width: 48px;
+  height: auto;
+}
+
+.ice-icon.left {
+  transform: rotate(-15deg);
+}
+
+.ice-icon.right {
+  transform: rotate(15deg);
+}
+
+/* Lampjes boven het bord */
+.lights {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 1;
+}
+
+.bulb {
+  width: 14px;
+  height: 14px;
+  background: #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #ffd700;
+  animation: blink 1.4s infinite ease-in-out;
+}
+
+.bulb:nth-child(even) {
+  background: #ff69b4;
+  box-shadow: 0 0 6px #ff69b4;
+  animation-delay: 0.3s;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes drop-in {
+  from {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+
 </style>

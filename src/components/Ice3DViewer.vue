@@ -1,4 +1,12 @@
 <template>
+  <div class="welcome-banner">
+    <h1>🍦 Welkom bij de Ben & Jerry's Ice Configurator!</h1>
+    <p>
+      Stel hier je eigen unieke ijsje samen. Klik op het ijsje om je favoriete smaak te kiezen
+      en geef het wat sprinkles! 😋
+    </p>
+  </div>
+
   <div
     ref="container"
     class="three-container"
@@ -91,7 +99,7 @@ function showOutlineMesh(active) {
   if (iceOutlineMesh) {
     iceOutlineMesh.visible = active;
     iceOutlineMesh.material.opacity = active ? 0.9 : 0.0;
-    iceOutlineMesh.material.color.set(active ? 0x00bfff : 0x000000); // Blauwe gloed
+    iceOutlineMesh.material.color.set(active ? 0x00bfff : 0x000000);
   }
 }
 
@@ -148,7 +156,7 @@ onMounted(() => {
           iceMesh = child;
 
           const outlineMaterial = new MeshBasicMaterial({
-            color: 0x00bfff, // Blauwe gloed
+            color: 0x00bfff,
             transparent: true,
             opacity: 0.0,
             depthWrite: false
@@ -198,6 +206,26 @@ watch(() => props.sprinkleColor, updateSprinkleVisibility);
 </script>
 
 <style scoped>
+.welcome-banner {
+  background: linear-gradient(to right, #00c4cc, #8ed1fc);
+  padding: 1.2rem 1rem;
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-banner h1 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.welcome-banner p {
+  font-size: 1rem;
+  margin: 0;
+}
+
 .three-container {
   width: 100%;
   height: 400px;
