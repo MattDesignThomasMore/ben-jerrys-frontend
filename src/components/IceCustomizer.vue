@@ -27,7 +27,7 @@
         <header class="ui-header">
           <h2>Stap 1: Kies je smaak</h2>
           <button class="btn primary" :disabled="!order.flavor" @click="nextStep">
-            Volgende →
+            Volgende 
           </button>
         </header>
         <div class="options">
@@ -49,7 +49,7 @@
         <header class="ui-header">
           <h2>Stap 2: Kies je toppingkleur</h2>
           <button class="btn primary" :disabled="!order.topping" @click="nextStep">
-            Volgende →
+            Afrekenen
           </button>
         </header>
         <div class="options">
@@ -132,7 +132,7 @@
           <div class="contact-section">
             <h3>Contact information</h3>
             <input v-model="order.email" type="email" placeholder="Email" required />
-             <input v-model="order.email" type="email confirm" placeholder="Email Confirm" required />
+             <input v-model="order.email" type="email confirm" placeholder="Email confirm" required />
             <div class="two-col">
               <input v-model="order.firstName" placeholder="First name" required />
               <input v-model="order.lastName" placeholder="Last name" required />
@@ -648,7 +648,7 @@ onMounted(() => {
   text-align: left;
 }
 .qty-cell button {
-  background: #5cff00;
+  background:  #00ffae;
   border: none;
   padding: 0 0.5rem;
   font-size: 1.2rem;
@@ -656,13 +656,13 @@ onMounted(() => {
   margin: 0 0.25rem;
 }
 .remove-btn {
-  background: #5cff00;
+  background:  #00ffae;
   border: none;
   padding: 0.2rem 0.5rem;
   cursor: pointer;
 }
 .toggle-details {
-  background: #5cff00;
+  background: #12e19f;
   color: #000;
   border: none;
   padding: 0.5rem 1rem;
@@ -696,7 +696,7 @@ onMounted(() => {
   font-weight: bold;
 }
 .preview-image {
-  width: 85%;
+  width: 86%;
   border-radius: 8px;
   margin-top: 1rem;
 }
@@ -815,4 +815,28 @@ select {
     opacity: 1;
   }
 }
+
+/* Stap 1: Basis-styling */
+.btn.primary {
+  background-color: #00eeff;          /* je gewenste kleur */
+  color: #000;                        /* donkere tekst voor contrast */
+  font-size: 1.1rem;                 /* iets groter lettertype */
+  font-weight: 600;                   /* iets vetter */
+  padding: 0.50rem 1.25rem;            /* ruimere knoppen */
+  border-radius: 12px;                /* afgerondere hoeken */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Stap 2: Hover‑effect voor extra vrolijkheid */
+.btn.primary:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px  #00eeff;  
+}
+
+/* Stap 3: Disabled‑state duidelijk maken */
+.btn.primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 </style>
