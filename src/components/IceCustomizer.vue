@@ -132,7 +132,7 @@
           <div class="contact-section">
             <h3>Contact information</h3>
             <input v-model="order.email" type="email" placeholder="Email" required />
-            <label><input type="checkbox" v-model="order.subscribe" /> Email me with news and offers</label>
+             <input v-model="order.email" type="email confirm" placeholder="Email Confirm" required />
             <div class="two-col">
               <input v-model="order.firstName" placeholder="First name" required />
               <input v-model="order.lastName" placeholder="Last name" required />
@@ -621,7 +621,6 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 2rem;
-  padding: 2rem;
   z-index: 20;
   position: relative;
 }
@@ -697,7 +696,7 @@ onMounted(() => {
   font-weight: bold;
 }
 .preview-image {
-  width: 100%;
+  width: 85%;
   border-radius: 8px;
   margin-top: 1rem;
 }
@@ -722,7 +721,7 @@ onMounted(() => {
 }
 input,
 select {
-  width: 100%;
+  width: 85%;
   padding: 0.75rem;
   margin-bottom: 1rem;
   border: 1px solid #ccc;
