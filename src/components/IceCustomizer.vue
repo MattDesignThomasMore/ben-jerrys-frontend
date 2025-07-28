@@ -160,7 +160,7 @@ const pointer = new Vector2();
 const raycaster = new Raycaster();
 
 const flavors = [
-  { name: 'Vanille', color: '#fff5c3', emoji: '🤍' },
+  { name: 'Vanille', color: '#FFD67A', emoji: '🤍' },
   { name: 'Chocolade', color: '#5D3A00', emoji: '🍫' },
   { name: 'Aardbei', color: '#ff6fa5', emoji: '🍓' },
   { name: 'Karamel', color: '#c69c6d', emoji: '🍯' },
@@ -168,9 +168,9 @@ const flavors = [
 ];
 
 const toppings = [
-  { name: 'Geel', color: '#f9e79f', },
-  { name: 'Blauw', color: '#85c1e9', },
-  { name: 'Groen', color: '#abebc6', },
+  { name: 'Geel', color: '#ffd900', },
+  { name: 'Blauw', color: '#4dc6ff', },
+  { name: 'Groen', color: '#5cdb71', },
   { name: 'Geen', color: '#dddddd', emoji: '🚫' }
 ];
 
