@@ -69,60 +69,72 @@
         </div>
       </transition>
 
-      <!-- Stap 3: Gecombineerde cart + form -->
-      <transition name="fade">
-        <div v-if="step === 3 && !orderConfirmed" class="cart-fullcard">
-          <h2>Shopping Cart & Gegevens</h2>
-          <div v-if="previewImage" class="preview-wrapper">
-            <img :src="previewImage" class="preview-image-large" alt="Preview ijsje" />
-          </div>
-          <table class="cart-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Smaak</th>
-                <th>Topping</th>
-                <th>Aantal</th>
-                <th>Totaal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>IJsje</td>
-                <td>{{ flavorDisplay }}</td>
-                <td>{{ toppingDisplay }}</td>
-                <td class="qty-cell">
-                  <button @click="decrementQty">–</button>
-                  {{ order.quantity }}
-                  <button @click="incrementQty">+</button>
-                </td>
-                <td>€{{ totalPrice.toFixed(2) }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="summary-row">
-            <a href="#" @click.prevent="backToConfig">← Verder aanpassen</a>
-            <div class="totals">
-              <div>Subtotaal: €{{ totalPrice.toFixed(2) }}</div>
-              <div>Verzending: Gratis</div>
-              <div class="grand-total">Totaal: €{{ totalPrice.toFixed(2) }}</div>
-            </div>
-          </div>
-          <hr />
-          <form @submit.prevent="submitOrder" class="combined-form">
-            <div class="form-group">
-              <input v-model="order.name" required placeholder=" Naam" />
-            </div>
-            <div class="form-group">
-              <input v-model="order.address" required placeholder=" Adres" />
-            </div>
-            <button class="checkout-btn full-width" :disabled="!canCheckout" type="submit">
-              Bestellen (€{{ totalPrice.toFixed(2) }})
-            </button>
-            <p v-if="error" class="error-msg">❌ Er is iets misgegaan. Probeer opnieuw.</p>
-          </form>
-        </div>
-      </transition>
+     <!-- Stap 3 overlay met blur -->
+<transition name="overlay-fade">
+  <div
+    v-if="step === 3 && !orderConfirmed"
+    class="modal-overlay"
+    style="z-index: 19;"
+  ></div>
+</transition>
+
+<transition name="fade">
+  <div
+    v-if="step === 3 && !orderConfirmed"
+    class="cart-fullcard"
+    style="z-index: 20;"
+  >
+    <h2>Shopping cart & gegevens</h2>
+    <div v-if="previewImage" class="preview-wrapper">
+      <img :src="previewImage" class="preview-image-large" alt="Preview ijsje" />
+    </div>
+    <table class="cart-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Smaak</th>
+          <th>Topping</th>
+          <th>Aantal</th>
+          <th>Totaal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>IJsje</td>
+          <td>{{ flavorDisplay }}</td>
+          <td>{{ toppingDisplay }}</td>
+          <td class="qty-cell">
+            <button @click="decrementQty">–</button>
+            {{ order.quantity }}
+            <button @click="incrementQty">+</button>
+          </td>
+          <td>€{{ totalPrice.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="summary-row">
+      <a href="#" @click.prevent="backToConfig">← Verder aanpassen</a>
+      <div class="totals">
+        <div>Subtotaal: €{{ totalPrice.toFixed(2) }}</div>
+        <div>Verzending: Gratis</div>
+        <div class="grand-total">Totaal: €{{ totalPrice.toFixed(2) }}</div>
+      </div>
+    </div>
+    <hr />
+    <form @submit.prevent="submitOrder" class="combined-form">
+      <div class="form-group">
+        <input v-model="order.name" required placeholder=" Naam" />
+      </div>
+      <div class="form-group">
+        <input v-model="order.address" required placeholder=" Adres" />
+      </div>
+      <button class="checkout-btn full-width" :disabled="!canCheckout" type="submit">
+        Bestellen (€{{ totalPrice.toFixed(2) }})
+      </button>
+      <p v-if="error" class="error-msg">❌ Er is iets misgegaan. Probeer opnieuw.</p>
+    </form>
+  </div>
+</transition>
 
       <!-- Bevestiging -->
   <transition name="overlay-fade">
@@ -147,9 +159,9 @@
         <li><span class="label">Adres:</span> {{ order.address }}</li>
         <li><span class="label">Totaal:</span> €{{ lastOrder.price.toFixed(2) }}</li>
       </ul>
-      <button class="btn-new-order" @click="reset">
-        Nieuwe bestelling
-      </button>
+    <button class="btn-new-order" @click="resetOrder">
+  Nieuwe bestelling
+</button>
     </div>
   </transition>
 </template>
@@ -186,7 +198,7 @@
 
   // options
   const flavors = [
-    { name: 'Vanille', color: '#fff5c3', emoji: '🤍' },
+    { name: 'Vanille', color: '#F9E79F', emoji: '🤍' },
     { name: 'Chocolade', color: '#5D3A00', emoji: '🍫' },
     { name: 'Aardbei', color: '#ff6fa5', emoji: '🍓' },
     { name: 'Karamel', color: '#c69c6d', emoji: '🍯' },
@@ -195,7 +207,7 @@
   const toppings = [
     { name: 'Geel', color: '#ffd900' },
     { name: 'Blauw', color: '#4dc6ff' },
-    { name: 'Groen', color: '#55fa70' },
+    { name: 'Groen', color: '#32CD32' },
     { name: 'Geen', color: '#dddddd', emoji: '🚫' }
   ];
 
@@ -264,15 +276,28 @@
     }
   }
 
-  function reset() {
-    order.flavor = null;
-    order.topping = null;
-    order.quantity = 1;
-    order.name = '';
-    order.address = '';
-    orderConfirmed.value = false;
-    step.value = 1;
+function resetOrder() {
+  // ─── 1) Reset Vue‑state
+  order.flavor        = null
+  order.topping       = null
+  order.quantity      = 1
+  order.name          = ''
+  order.address       = ''
+  lastOrder.price     = 0
+
+  orderConfirmed.value = false
+  step.value           = 1
+  isIceSelected.value  = false
+  previewImage.value   = null
+
+  // ─── 2) **Reset je 3D‑model** zodat kleur & sprinkles verdwijnen
+  if (iceMesh) {
+    iceMesh.material.color.set('#ffffff')      // terug naar wit
   }
+  Object.values(sprinkleMeshes).forEach(m => {
+    if (m) m.visible = false                   // alle toppings uit
+  })
+}
 
   // Three.js setup
   let scene, camera, renderer, controls, iceMesh, outlineMesh;
@@ -934,6 +959,41 @@
   border-radius: 8px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;                      /* top:0; right:0; bottom:0; left:0; */
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  /* inline z‑index: 19 in je template; als je dit liever in CSS zet: */
+  z-index: 19;
+}
+
+/* Transition voor de overlay */
+.overlay-fade-enter-active,
+.overlay-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.overlay-fade-enter-from,
+.overlay-fade-leave-to {
+  opacity: 0;
+}
+
+/* Zorg dat de cart-fullcard boven de overlay zweeft */
+.cart-fullcard {
+  /* inline z‑index: 20 in je template; als je dit liever in CSS zet: */
+  z-index: 20;
+  position: relative; /* om de z-index effectief te maken */
+}
+
+.checkout-btn:hover:not(:disabled) {
+  /* maak ’m 10% donkerder */
+  filter: brightness(0.9);
+  /* of hardcode een iets donkerdere tint:
+     background-color: #00e6c0;
+  */
+  transition: filter 0.2s ease;
 }
 
 </style>
