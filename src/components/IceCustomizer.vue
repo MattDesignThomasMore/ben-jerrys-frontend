@@ -122,17 +122,42 @@
     </div>
     <hr />
     <form @submit.prevent="submitOrder" class="combined-form">
-      <div class="form-group">
-        <input v-model="order.name" required placeholder=" Naam" />
-      </div>
-      <div class="form-group">
-        <input v-model="order.address" required placeholder=" Adres" />
-      </div>
-      <button class="checkout-btn full-width" :disabled="!canCheckout" type="submit">
-        Bestellen (€{{ totalPrice.toFixed(2) }})
-      </button>
-      <p v-if="error" class="error-msg">❌ Er is iets misgegaan. Probeer opnieuw.</p>
-    </form>
+  <div class="form-group">
+    <label for="full-name" style="display: block; margin-bottom: 4px;">
+      volledige naam
+    </label>
+    <input
+      v-model="order.name"
+      type="text"
+      required
+      name="full-name"
+      id="full-name"
+      placeholder="bv. Max Debruin"
+      autocomplete="name"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="full-address" style="display: block; margin-bottom: 4px;">
+      volledig adres
+    </label>
+    <input
+      v-model="order.address"
+      type="text"
+      required
+      name="full-address"
+      id="full-address"
+      placeholder="bv. Molenstraat 15, 9000 Gent"
+      autocomplete="street-address"
+    />
+  </div>
+
+  <button class="checkout-btn full-width" :disabled="!canCheckout" type="submit">
+    Bestellen (€{{ totalPrice.toFixed(2) }})
+  </button>
+
+  <p v-if="error" class="error-msg">❌ Er is iets misgegaan. Probeer opnieuw.</p>
+</form>
   </div>
 </transition>
 
@@ -537,7 +562,7 @@ function resetOrder() {
   /* === Cart Fullcard === */
   .cart-fullcard {
     background: #fff;
-    width: 75vw;
+    width: 68vw;
     max-height: 90vh;
     margin: -1vh auto;
     padding: 2rem;
