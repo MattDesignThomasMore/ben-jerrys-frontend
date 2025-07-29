@@ -7,7 +7,7 @@
       </div>
       <div class="sign-content">
         <h1>Welkom bij <span class="brand">Ben & Jerry’s</span> ijsconfigurator</h1>
-        <p>Stel jouw droomijsje samen in 3 simpele stappen</p>
+        <p>Klik op het ijsje om je droomcombinatie samen te stellen</p>
       </div>
     </div>
   </div>
@@ -47,7 +47,11 @@
     <transition name="fade">
       <div v-if="step === 2" class="ui-card">
         <header class="ui-header">
-          <h2>Stap 2: Kies je toppingkleur</h2>
+          <!-- Terug-knop naar stap 1 -->
+              <div class="header-left">
+       <button class="btn secondary" @click="prevStep">←</button>
+       <h2>Stap 2: Kies je toppingkleur</h2>
+     </div>
           <button class="btn primary" :disabled="!order.topping" @click="nextStep">
             Afrekenen
           </button>
@@ -177,9 +181,9 @@ const flavors = [
   { name: 'Geen', color: '#cccccc', emoji: '🚫' }
 ];
 const toppings = [
-  { name: 'Geel', color: '#ffd900', },
-  { name: 'Blauw', color: '#4dc6ff', },
-  { name: 'Groen', color: '#55fa70',},
+  { name: 'Geel', color: '#ffd900' },
+  { name: 'Blauw', color: '#4dc6ff' },
+  { name: 'Groen', color: '#55fa70' },
   { name: 'Geen', color: '#dddddd', emoji: '🚫' }
 ];
 
@@ -190,10 +194,29 @@ const toppingDisplay = computed(() => order.topping === 'Geen' ? 'Geen topping' 
 const canCheckout = computed(() => order.name && order.address && totalPrice.value > 0 && !error.value);
 
 // handlers
-function selectFlavor(name) { order.flavor = name; if (iceMesh) iceMesh.material.color = new Color(flavors.find(f => f.name === name).color); }
-function selectTopping(name) { order.topping = name; Object.values(sprinkleMeshes).forEach(m => m && (m.visible = false)); if (name !== 'Geen' && sprinkleMeshes[name]) sprinkleMeshes[name].visible = true; }
-function nextStep() { if (step.value < 3) { isIceSelected.value = false; step.value++; } }
-function backToConfig() { step.value = 1; }
+function selectFlavor(name) {
+  order.flavor = name;
+  if (iceMesh) iceMesh.material.color = new Color(flavors.find(f => f.name === name).color);
+}
+function selectTopping(name) {
+  order.topping = name;
+  Object.values(sprinkleMeshes).forEach(m => m && (m.visible = false));
+  if (name !== 'Geen' && sprinkleMeshes[name]) sprinkleMeshes[name].visible = true;
+}
+function nextStep() {
+  if (step.value < 3) {
+    isIceSelected.value = false;
+    step.value++;
+  }
+}
+function prevStep() {
+  // terug naar stap 1 en popup openhouden
+  step.value = 1;
+  isIceSelected.value = true;
+}
+function backToConfig() {
+  step.value = 1;
+}
 function incrementQty() { order.quantity++; }
 function decrementQty() { if (order.quantity > 1) order.quantity--; }
 
@@ -327,43 +350,323 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.canvas { position:absolute; top:0; left:0; width:100%; height:100%; z-index:1; }
-.welcome-text { position:absolute; top:0; left:50%; transform:translateX(-50%); z-index:40; width:100%; max-width:700px; animation:drop-in 1s ease-out forwards; }
-.wood-sign { background:url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat #8b5e3c; border-radius:0 0 32px 32px; border-bottom:8px solid #6b4c2a; padding:2rem; text-align:center; font-family:'Comic Sans MS',cursive; color:#fff8e1; box-shadow:0 8px 24px rgba(0,0,0,0.4); }
-.lights { position:absolute; top:-12px; left:50%; transform:translateX(-50%); display:flex; gap:10px; z-index:1; }
-.bulb { width:14px; height:14px; background:#ffd700; border-radius:50%; box-shadow:0 0 6px #ffd700; animation:blink 1.4s infinite; }
-.bulb:nth-child(even) { background:#ff69b4; box-shadow:0 0 6px #ff69b4; animation-delay:0.3s; }
-.ui-card { position:absolute; bottom:0; left:0; right:0; background:rgba(255,255,255,0.95); padding:1.5rem; border-top-left-radius:24px; border-top-right-radius:24px; box-shadow:0 -4px 20px rgba(0,0,0,0.1); z-index:10; animation:slide-up 0.3s ease-out; }
-.ui-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-.options { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; }
-.option-btn { width:64px; height:64px; border-radius:50%; font-size:1.4rem; border:2px solid transparent; cursor:pointer; transition:all 0.2s; }
-.option-btn.selected { border-color:#000; box-shadow:0 0 10px rgba(0,0,0,0.2); }
-.cart-fullcard { background:#fff; width:75vw; max-height:90vh; margin:-1vh auto; padding:2rem; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.1); z-index:20; position:relative; overflow:visible; }
-.cart-fullcard h2 { margin-top:0; font-size:1.8rem; text-align:center; }
-.preview-wrapper { text-align:center; margin-bottom:1rem; }
-.preview-image-large { max-width:60%; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
-.cart-table { width:100%; border-collapse:collapse; margin-bottom:1rem; }
-.cart-table th, .cart-table td { padding:0.75rem; border-bottom:1px solid #ddd; text-align:left; }
-.qty-cell button { background:#00ffae; border:none; padding:0 0.5rem; font-size:1.2rem; cursor:pointer; margin:0 0.25rem; }
-.summary-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
-.summary-row a { color:#00bfff; text-decoration:none; }
-.totals div { margin-bottom:0.25rem; text-align:right; }
-.grand-total { font-weight:bold; }
-.combined-form { display:flex; flex-direction:column; gap:1rem; margin-top:1rem; }
-.form-group input { width:98%; padding:0.8rem; border-radius:8px; border:1px solid #ccc; font-size:1rem; }
-.full-width { width:100%; }
-.checkout-btn { padding:1rem; background:#5cff00; border:none; font-size:1.1rem; cursor:pointer; border-radius:8px; }
-.checkout-btn:disabled { background:#e0e0e0; cursor:not-allowed; }
-.error-msg { color:red; margin-top:0.5rem; text-align:center; }
-.confirmation { position:absolute; bottom:0; left:0; right:0; background:#fff; padding:2rem; text-align:center; z-index:30; border-top-left-radius:24px; border-top-right-radius:24px; box-shadow:0 -4px 20px rgba(0,0,0,0.1); }
-.confirmation .summary { list-style:none; padding:0; margin:1rem 0; text-align:left; }
-.confirmation .summary li { margin-bottom:0.5rem; }
-@keyframes slide-up { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
-.fade-enter-active { transition:all 0.3s ease; }
-.fade-enter-from { opacity:0; transform:translateY(20px); }
-@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
-@keyframes drop-in { from { transform:translate(-50%, -100%); opacity:0; } to { transform:translate(-50%,0); opacity:1; } }
-.btn.primary { background-color:#00eeff; color:#000; font-size:1.1rem; font-weight:600; padding:0.5rem 1.25rem; border-radius:12px; transition:transform 0.2s ease, box-shadow 0.2s ease; }
-.btn.primary:hover:not(:disabled) { transform:scale(1.05); box-shadow:0 8px 20px #00eeff; }
-.btn.primary:disabled { opacity:0.6; cursor:not-allowed; }
+/* === Layout Positions === */
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.welcome-text {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  width: 100%;
+  max-width: 700px;
+  animation: drop-in 1s ease-out forwards;
+}
+
+.ui-card,
+.confirmation {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 10;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation {
+  background: #fff;
+  z-index: 30;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* === Animations === */
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+@keyframes drop-in {
+  from { transform: translate(-50%, -100%); opacity: 0; }
+  to   { transform: translate(-50%, 0); opacity: 1; }
+}
+
+/* === Wood Sign Header === */
+.wood-sign {
+  background: url('https://www.transparenttextures.com/patterns/wood-pattern.png') repeat #8b5e3c;
+  border-radius: 0 0 32px 32px;
+  border-bottom: 8px solid #6b4c2a;
+  padding: 2rem;
+  text-align: center;
+  font-family: 'Comic Sans MS', cursive;
+  color: #fff8e1;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* === Decorative Lights === */
+.lights {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 1;
+}
+
+.bulb {
+  width: 14px;
+  height: 14px;
+  background: #ffd700;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #ffd700;
+  animation: blink 1.4s infinite;
+}
+
+.bulb:nth-child(even) {
+  background: #ff69b4;
+  box-shadow: 0 0 6px #ff69b4;
+  animation-delay: 0.3s;
+}
+
+/* === UI Card === */
+.ui-card {
+  padding: 1.5rem;
+  animation: slide-up 0.3s ease-out;
+}
+
+/* header met 2 kinderen: .header-left en .btn.primary */
+.ui-header {
+  display: flex;
+  justify-content: space-between; /* header-left links, primary rechts */
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* groep pijl + titel naast elkaar */
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+/* minder ruimte tussen pijl en titel */
+.btn.secondary {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+/* === Options Buttons === */
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.option-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option-btn.selected {
+  border-color: #000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* === Cart Fullcard === */
+.cart-fullcard {
+  background: #fff;
+  width: 75vw;
+  max-height: 90vh;
+  margin: -1vh auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: visible;
+  z-index: 20;
+}
+
+.cart-fullcard h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  text-align: center;
+}
+
+.preview-wrapper {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.preview-image-large {
+  max-width: 60%;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* === Cart Table === */
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.cart-table th,
+.cart-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.qty-cell button {
+  background: #00ffae;
+  border: none;
+  padding: 0 0.5rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin: 0 0.25rem;
+}
+
+/* === Summary and Totals === */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.summary-row a {
+  color: #00bfff;
+  text-decoration: none;
+}
+
+.totals div {
+  margin-bottom: 0.25rem;
+  text-align: right;
+}
+
+.grand-total {
+  font-weight: bold;
+}
+
+/* === Forms === */
+.combined-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.form-group input {
+  width: 98%;
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* === Buttons === */
+.checkout-btn {
+  padding: 1rem;
+  background: #00ffae;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.checkout-btn:disabled {
+  background: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  background-color: #00c4cc;       /* Frisse aqua-tint */
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 12px;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn.primary:hover:not(:disabled) {
+  background-color: #009fa6;       /* Donkerdere tint bij hover */
+  transform: translateY(-1px);
+}
+
+.btn.primary:disabled {
+  background-color: #c8f1f3;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* === Secondary Terug‑knop === */
+.btn.secondary {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-right: 1rem;
+}
+
+/* === Error & Confirmation === */
+.error-msg {
+  color: red;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.confirmation .summary {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.confirmation .summary li {
+  margin-bottom: 0.5rem;
+}
+
+/* === Transitions === */
+.fade-enter-active {
+  transition: all 0.3s ease;
+}
+
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+
 </style>
