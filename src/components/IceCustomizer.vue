@@ -124,7 +124,7 @@
     <form @submit.prevent="submitOrder" class="combined-form">
   <div class="form-group">
     <label for="full-name" style="display: block; margin-bottom: 4px;">
-      volledige naam
+      Volledige naam
     </label>
     <input
       v-model="order.name"
@@ -139,7 +139,7 @@
 
   <div class="form-group">
     <label for="full-address" style="display: block; margin-bottom: 4px;">
-      volledig adres
+      Volledig adres
     </label>
     <input
       v-model="order.address"
@@ -360,7 +360,7 @@ function resetOrder() {
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.outputColorSpace = LinearSRGBColorSpace;
     renderer.toneMapping = ACESFilmicToneMapping;
-   renderer.toneMappingExposure = 4;
+   renderer.toneMappingExposure = 3.5;
     canvasContainer.value.appendChild(renderer.domElement);
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
