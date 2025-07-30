@@ -1,12 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import CustomizerView from '../views/CustomizerView.vue';
-import AdminView from '../views/AdminView.vue';
-import OrderDetail from '../views/OrderDetail.vue';
+import CustomizerView from '../components/IceCustomizer.vue';
 
 const routes = [
-  { path: '/', name: 'Customizer', component: CustomizerView },
-  { path: '/admin', name: 'Admin', component: AdminView },
-  { path: '/admin/order/:id', name: 'OrderDetail', component: OrderDetail }
+  { path: '/', name: 'Customizer', component: CustomizerView }
 ];
 
 const router = createRouter({
