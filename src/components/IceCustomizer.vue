@@ -50,7 +50,7 @@
             <!-- Terug-knop naar stap 1 -->
                 <div class="header-left">
         <button class="btn secondary" @click="prevStep">←</button>
-        <h2>Stap 2: Kies je toppingkleur</h2>
+        <h2>Stap 2: Kies je topping</h2>
       </div>
             <button class="btn primary" :disabled="!order.topping" @click="nextStep">
               Afrekenen
@@ -194,13 +194,13 @@
   <script setup>
   import { ref, reactive, computed, onMounted, watch } from 'vue';
   import {
-    Scene, PerspectiveCamera, WebGLRenderer,
-    AmbientLight, DirectionalLight,
-    Raycaster, Vector2, Color,
-    Mesh, MeshBasicMaterial,
-    sRGBEncoding, ACESFilmicToneMapping,
-    EquirectangularReflectionMapping
-  } from 'three';
+  Scene, PerspectiveCamera, WebGLRenderer,
+  AmbientLight, DirectionalLight,
+  Raycaster, Vector2, Color,
+  Mesh, MeshBasicMaterial,
+  LinearSRGBColorSpace, ACESFilmicToneMapping,
+  EquirectangularReflectionMapping
+} from 'three';
   import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
@@ -358,9 +358,9 @@ function resetOrder() {
     renderer = new WebGLRenderer({ antialias:true, alpha:true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.outputEncoding = sRGBEncoding;
+    renderer.outputColorSpace = LinearSRGBColorSpace;
     renderer.toneMapping = ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1;
+   renderer.toneMappingExposure = 4;
     canvasContainer.value.appendChild(renderer.domElement);
     controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
