@@ -35,3 +35,9 @@ src/
 └── App.vue              # Rootcomponent
 └── main.js              # Vue app initialisatie
 ```
+
+## 🚀 Starten
+
+```bash
+npm install
+npm run serve
