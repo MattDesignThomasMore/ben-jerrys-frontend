@@ -205,7 +205,7 @@
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
-  // refs & state
+  // refs & state variables
   const canvasContainer = ref();
   const step = ref(1);
   const isIceSelected = ref(false);
