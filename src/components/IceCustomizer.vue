@@ -302,7 +302,6 @@
   }
 
 function resetOrder() {
-  // ─── 1) Reset Vue‑state
   order.flavor        = null
   order.topping       = null
   order.quantity      = 1
