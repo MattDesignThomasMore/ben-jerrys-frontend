@@ -205,7 +205,6 @@
   import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
   import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
-  // refs & state variables
   const canvasContainer = ref();
   const step = ref(1);
   const isIceSelected = ref(false);
@@ -214,7 +213,6 @@
   const error = ref(false);
   const previewImage = ref(null);
 
-  
   const order = reactive({ flavor: null, topping: null, quantity: 1, name: '', address: '' });
   const lastOrder = reactive({ price: 0 });
 
