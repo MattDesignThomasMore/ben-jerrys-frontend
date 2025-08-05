@@ -214,7 +214,7 @@
   const error = ref(false);
   const previewImage = ref(null);
 
-  // reactive order
+  
   const order = reactive({ flavor: null, topping: null, quantity: 1, name: '', address: '' });
   const lastOrder = reactive({ price: 0 });
 
