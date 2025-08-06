@@ -1,5 +1,4 @@
   <template>
-    <!-- Welkomstbord -->
     <div class="welcome-text" v-if="!orderConfirmed && step < 3">
       <div class="wood-sign">
         <div class="lights">
