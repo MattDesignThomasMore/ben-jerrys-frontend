@@ -160,7 +160,6 @@
   </div>
 </transition>
 
-      <!-- Bevestiging -->
   <transition name="overlay-fade">
     <div v-if="orderConfirmed" class="modal-overlay"></div>
   </transition>
