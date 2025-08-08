@@ -255,7 +255,6 @@
     }
   }
   function prevStep() {
-    // terug naar stap 1 en popup openhouden
     step.value = 1;
     isIceSelected.value = true;
   }
