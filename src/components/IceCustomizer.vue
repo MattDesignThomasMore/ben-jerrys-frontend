@@ -217,7 +217,7 @@
 
   const pricePerIce = 1.99;
 
-  // options
+
   const flavors = [
     { name: 'Vanille', color: '#F9E79F', emoji: '🤍' },
     { name: 'Chocolade', color: '#5D3A00', emoji: '🍫' },
