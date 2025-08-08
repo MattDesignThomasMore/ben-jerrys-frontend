@@ -214,7 +214,7 @@
   const order = reactive({ flavor: null, topping: null, quantity: 1, name: '', address: '' });
   const lastOrder = reactive({ price: 0 });
 
-  // pricing (flat rate per ijsje)
+
   const pricePerIce = 1.99;
 
   // options
