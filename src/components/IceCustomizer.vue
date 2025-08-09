@@ -510,7 +510,7 @@ function resetOrder() {
   /* header met 2 kinderen: .header-left en .btn.primary */
   .ui-header {
     display: flex;
-    justify-content: space-between; /* header-left links, primary rechts */
+    justify-content: space-between; 
     align-items: center;
     margin-bottom: 1rem;
   }
