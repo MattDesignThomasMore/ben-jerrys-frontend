@@ -311,7 +311,7 @@ function resetOrder() {
 
   // ─── 2) **Reset je 3D‑model
   if (iceMesh) {
-    iceMesh.material.color.set('#ffffff')      // terug naar wi
+    iceMesh.material.color.set('#ffffff')      // terug naar 
   }
   Object.values(sprinkleMeshes).forEach(m => {
     if (m) m.visible = false                   // alle toppings uit
