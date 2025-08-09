@@ -447,7 +447,7 @@ function resetOrder() {
     text-align: center;
   }
 
-  /* === Animations === */
+  
   @keyframes slide-up {
     from { transform: translateY(100%); opacity: 0; }
     to   { transform: translateY(0); opacity: 1; }
