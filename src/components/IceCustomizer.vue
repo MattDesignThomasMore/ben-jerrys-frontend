@@ -314,7 +314,7 @@ function resetOrder() {
     iceMesh.material.color.set('#ffffff')      
   }
   Object.values(sprinkleMeshes).forEach(m => {
-    if (m) m.visible = false                   // alle toppings uit
+    if (m) m.visible = false                   
   })
 }
 
