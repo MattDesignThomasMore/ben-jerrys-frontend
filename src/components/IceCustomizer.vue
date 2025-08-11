@@ -309,7 +309,7 @@ function resetOrder() {
   isIceSelected.value  = false
   previewImage.value   = null
 
-  // ─── 2) **Reset je 3D‑model
+  // ─── 2) **Reset je 3D‑mode
   if (iceMesh) {
     iceMesh.material.color.set('#ffffff')      
   }
