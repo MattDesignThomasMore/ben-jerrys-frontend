@@ -318,7 +318,7 @@ function resetOrder() {
   })
 }
 
-  // Three.js setup
+
   let scene, camera, renderer, controls, iceMesh, outlineMesh;
   const sprinkleMeshes = { Geel: null, Blauw: null, Groen: null };
   const pointer = new Vector2();
