@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <!-- 3D‑canvas altijd op achtergrond -->
+    <!-- 3D‑canvas altijd op  -->
     <div
       ref="canvasContainer"
       class="canvas"
