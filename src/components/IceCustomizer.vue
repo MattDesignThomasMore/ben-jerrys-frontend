@@ -19,7 +19,7 @@
     ></div>
 
     <div class="ice-app">
-      <!-- Stap 1: Smaak kiez -->
+      <!-- Stap 1: Smaak kie -->
       <transition name="fade">
         <div v-if="step === 1 && isIceSelected" class="ui-card">
           <header class="ui-header">
