@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <!-- 3D‑canvas altijd op  -->
+    <!-- 3D‑canvas  -->
     <div
       ref="canvasContainer"
       class="canvas"
