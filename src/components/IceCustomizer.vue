@@ -47,7 +47,17 @@
           <header class="ui-header">
             <!-- Terug-knop naar stap 1 -->
                 <div class="header-left">
-        <button class="btn secondary" @click="prevStep">←</button>
+       <button class="btn-back" @click="prevStep" aria-label="Terug">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="icon">
+    <path d="M15 19L8 12l7-7" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2.2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+  </svg>
+</button>
+
         <h2>Stap 2: Kies je topping</h2>
       </div>
             <button class="btn primary" :disabled="!order.topping" @click="nextStep">
@@ -1013,5 +1023,39 @@ function resetOrder() {
   */
   transition: filter 0.2s ease;
 }
+
+.btn-back {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #e5e7eb;     /* subtiele border */
+  border-radius: 10px;           /* zachte hoeken */
+  background: #fff;              /* clean */
+  color: #374151;                /* neutraal donkergrijs */
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.btn-back .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-back:hover {
+  background: #f9fafb;           /* subtiele hover */
+  border-color: #d1d5db;
+}
+
+.btn-back:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.4); /* nette focusring */
+}
+
+.btn-back {
+  margin-right: 16px; /* ruimte tussen knop en tekst */
+}
+
 
 </style>
