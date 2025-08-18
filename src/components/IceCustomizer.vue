@@ -173,7 +173,7 @@
     <div v-if="orderConfirmed" class="modal-overlay"></div>
   </transition>
 
-  <!-- Bevestiging met animatie ----->
+  <!-- Bevestiging met animatie ---->
   <transition name="card-pop" appear>
     <div v-if="orderConfirmed" class="confirmation-card">
     <div class="confirmation-icon">
@@ -415,7 +415,7 @@ function resetOrder() {
   </script>
 
   <style scoped>
-  /* === Layout Positions === */
+  /* === Layout Positions ==== */
   .canvas {
     position: absolute;
     top: 0;
