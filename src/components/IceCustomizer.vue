@@ -415,7 +415,7 @@ function resetOrder() {
   </script>
 
   <style scoped>
-  /* === Layout Positions ==== */
+  /* === Layout Positions === */
   .canvas {
     position: absolute;
     top: 0;
