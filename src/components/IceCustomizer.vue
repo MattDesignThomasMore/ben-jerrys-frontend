@@ -562,7 +562,7 @@ function resetOrder() {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
 
-  /* === Cart Fullcard === */
+  /* === Cart Fullcard ==== */
   .cart-fullcard {
     background: #fff;
     width: 68vw;
