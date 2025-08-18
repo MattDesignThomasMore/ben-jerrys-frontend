@@ -41,7 +41,7 @@
         </div>
       </transition></div>
 
-      <!-- Stap 2: Topping kiezen -->
+      <!-- Stap 2: Topping kiezen ---->
       <transition name="fade">
         <div v-if="step === 2" class="ui-card">
           <header class="ui-header">
