@@ -77,7 +77,7 @@
         </div>
       </transition>
 
-     <!-- Stap 3 overlay met blur -->
+     <!-- Stap 3 overlay met blur --->
 <transition name="overlay-fade">
   <div
     v-if="step === 3 && !orderConfirmed"
