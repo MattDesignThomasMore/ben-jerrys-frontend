@@ -1054,7 +1054,7 @@ function resetOrder() {
 }
 
 .btn-back {
-  margin-right: 16px; /* ruimte tussen knop en tekst */
+  margin-right: 16px; /* ruimte tussen knop en tekste */
 }
 
 
