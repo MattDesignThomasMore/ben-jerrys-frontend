@@ -779,7 +779,7 @@ function resetOrder() {
     margin-bottom: 1.5rem;
   }
 
-  /* Details in twee kolommen */
+  /* Details in twee kolommenn */
   .confirmation-details {
     list-style: none;
     padding: 0;
