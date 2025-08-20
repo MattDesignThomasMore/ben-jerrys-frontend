@@ -41,3 +41,12 @@ src/
 ```bash
 npm install
 npm run serve
+``` 
+
+---
+
+## 🍦 Live Ice Configurator
+
+De publieksapp staat live op Render:  
+👉 [Ben & Jerry’s Ice Configurator](https://ben-jerrys-iceconfigurator.onrender.com)
+
