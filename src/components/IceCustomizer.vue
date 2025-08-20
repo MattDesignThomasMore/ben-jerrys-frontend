@@ -1078,6 +1078,7 @@ onMounted(() => {
 .btn-back .icon {
   width: 18px;
   height: 18px;
+  fill: currentColor;
 }
 
 .btn-back:hover {
@@ -1093,4 +1094,4 @@ onMounted(() => {
 .btn-back {
   margin-right: 16px;
 }
-</style>
+</style> 
