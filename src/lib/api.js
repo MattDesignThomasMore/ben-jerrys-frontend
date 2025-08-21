@@ -1,6 +1,3 @@
-// src/lib/api.js
-
-// 1) Bepaal de API-base (werkt voor Vite én Vue-CLI én op Render)
 const API =
   (typeof import.meta !== "undefined" &&
     import.meta.env &&
@@ -10,12 +7,11 @@ const API =
     ? "http://localhost:5000"
     : "https://ben-jerrys-api.onrender.com");
 
-// 2) Generieke fetch-helper met foutafhandeling
+
 export async function apiFetch(path, options = {}) {
   if (!path.startsWith("/")) path = "/" + path;
 
   const headers = new Headers(options.headers || {});
-  // Alleen zetten als het geen FormData is (dan laat je de browser 'm bepalen)
   if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
@@ -29,13 +25,12 @@ export async function apiFetch(path, options = {}) {
     throw new Error(`Netwerkfout naar ${url.split("?")[0]}`);
   }
 
-  // Probeer JSON te lezen; als het geen JSON is (HTML/lege body), negeren
+
   let data = null;
   try {
     data = await res.clone().json();
   } catch (e) {
-    // Niet leeg laten i.v.m. ESLint: no-empty
-    data = null; // parse-fout is oké; we geven hieronder een nette fout terug
+    data = null; 
   }
 
   if (!res.ok) {
@@ -48,7 +43,7 @@ export async function apiFetch(path, options = {}) {
   return data ?? (await res.json());
 }
 
-// 3) Kleine helpers die je in components kunt importeren
+
 export function apiGet(path) {
   return apiFetch(path, { method: "GET" });
 }

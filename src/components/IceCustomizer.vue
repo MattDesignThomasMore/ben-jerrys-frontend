@@ -250,7 +250,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
-// ✅ NIEUW: nette API-helper
+
 import { apiPost } from "@/lib/api";
 
 const canvasContainer = ref();
@@ -337,7 +337,7 @@ watch(step, (newStep) => {
   }
 });
 
-// ✅ AANGEPAST: submitOrder gebruikt apiPost en bewaart echte _id
+
 async function submitOrder() {
   error.value = false;
   try {
@@ -356,7 +356,7 @@ async function submitOrder() {
       throw new Error("Order niet opgeslagen op de server");
     }
 
-    orderId.value = saved._id; // toon echte Mongo-id
+    orderId.value = saved._id; 
     lastOrder.price = totalPrice.value;
     orderConfirmed.value = true;
   } catch (e) {
