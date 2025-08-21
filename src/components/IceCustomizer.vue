@@ -250,6 +250,9 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
+// ✅ NIEUW: nette API-helper
+import { apiPost } from "@/lib/api";
+
 const canvasContainer = ref();
 const step = ref(1);
 const isIceSelected = ref(false);
@@ -334,6 +337,7 @@ watch(step, (newStep) => {
   }
 });
 
+// ✅ AANGEPAST: submitOrder gebruikt apiPost en bewaart echte _id
 async function submitOrder() {
   error.value = false;
   try {
@@ -345,22 +349,18 @@ async function submitOrder() {
       address: order.address,
       price: totalPrice.value,
     };
-    const API_BASE =
-  process.env.VUE_APP_API_BASE ||
-  (typeof window !== 'undefined' ? window.__API_BASE__ : '') ||
-  ''; // fallback: zelfde origin
 
-// ...en in je submit:
-const res = await fetch(`${API_BASE}/api/orders`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(payload),
-});
-    if (!res.ok) throw new Error();
-    orderId.value = Math.floor(100000 + Math.random() * 900000);
+    const saved = await apiPost("/api/orders", payload);
+
+    if (!saved || !saved._id) {
+      throw new Error("Order niet opgeslagen op de server");
+    }
+
+    orderId.value = saved._id; // toon echte Mongo-id
     lastOrder.price = totalPrice.value;
     orderConfirmed.value = true;
-  } catch {
+  } catch (e) {
+    console.error("Bestelling mislukt:", e);
     error.value = true;
   }
 }
