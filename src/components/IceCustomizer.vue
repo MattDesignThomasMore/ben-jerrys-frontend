@@ -345,11 +345,17 @@ async function submitOrder() {
       address: order.address,
       price: totalPrice.value,
     };
-    const res = await fetch("http://localhost:5000/api/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const API_BASE =
+  process.env.VUE_APP_API_BASE ||
+  (typeof window !== 'undefined' ? window.__API_BASE__ : '') ||
+  ''; // fallback: zelfde origin
+
+// ...en in je submit:
+const res = await fetch(`${API_BASE}/api/orders`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload),
+});
     if (!res.ok) throw new Error();
     orderId.value = Math.floor(100000 + Math.random() * 900000);
     lastOrder.price = totalPrice.value;
@@ -1078,7 +1084,6 @@ onMounted(() => {
 .btn-back .icon {
   width: 18px;
   height: 18px;
-  fill: currentColor;
 }
 
 .btn-back:hover {
@@ -1086,8 +1091,7 @@ onMounted(() => {
   border-color: #d1d5db;
 }
 
-.btn-back:focus-visible {
-  outline: none;
+.btn-back:focus-visible {  outline: none;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
 }
 
